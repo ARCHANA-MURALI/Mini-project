@@ -12,14 +12,14 @@ if (isset($_POST['submit'])) {
         $userId = $_SESSION['id'];
 
         // Fetch user data from database
-        $sql = "SELECT * FROM admin WHERE id = '$userId'";
+        $sql = "SELECT * FROM worker WHERE id = '$userId'";
         $result = mysqli_query($con, $sql);
         $row = mysqli_fetch_assoc($result);
 
         // Verify if the current password matches the one in the database
         if (md5($currentPassword) === $row['password']) {
             // Update the password in the database
-            $updateSql = "UPDATE admin SET password =  '".md5($newPassword)."' WHERE id = '$userId'";
+            $updateSql = "UPDATE worker SET password =  '".md5($newPassword)."' WHERE id = '$userId'";
             if (mysqli_query($con, $updateSql)) {
                 echo "<script>alert('Password changed successfully');</script>";
                 echo "<script>window.location.assign('changepassword.php');</script>";

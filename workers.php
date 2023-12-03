@@ -1,22 +1,7 @@
 <?php
 // error_reporting(0);
 include('includes/config.php');
-if(isset($_GET['delete'])){
-    $id=$_GET['id'];
-    $query=mysqli_query($con,"DELETE from user WHERE id = '$id'");
-    if($query){
-      echo "<script>alert('Successfully Deleted');</script>";
-      echo "<script>window.location.assign('user.php');</script>"; 
-    }
-  }
-//   if(isset($_GET['update'])){
-//     $id=$_GET['update'];
-//     $query=mysqli_query($con,"UPDATE user set status='verified' WHERE id = '$id'");
-//     if($query){
-//       echo "<script>alert('Successfully verified');</script>";
-//       echo "<script>window.location.assign('user.php');</script>"; 
-//     }
-//   }
+
 
 ?>
 <!DOCTYPE html>
@@ -37,7 +22,7 @@ if(isset($_GET['delete'])){
        
         <div class="  rounded-lg ">
             <div class=" max-w-full mx-auto p-6">
-                <h1 class="text-3xl font-bold text-center text-white mb-4">User List</h1>
+                <h1 class="text-3xl font-bold text-center text-white mb-4">Worker List</h1>
 
                 <input type="text" id="searchInput" class="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring focus:border-blue-400" placeholder="Search...">
 
@@ -47,21 +32,22 @@ if(isset($_GET['delete'])){
                         
                             <th class="p-3 font-semibold text-left">Name</th>
                             <th class="p-3 font-semibold text-left">Email Id</th>
-                            <th class="p-3 font-semibold text-left">Gender</th>
+                        
                            
                             <th class="p-3 font-semibold text-left">Contact Number</th>
+                            <th class="p-3 font-semibold text-left">Address</th>
                            
                            
                            
                             
                             <th class="p-3 font-semibold text-left">Date</th>
                            
-                            
+                            <th class="p-3 font-semibold text-left">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
                     <?php
-$sql = "SELECT * FROM user";
+$sql = "SELECT * FROM worker where status='verified'";
 $result = $con->query($sql);
 
 if ($result->num_rows > 0) {
@@ -70,14 +56,16 @@ if ($result->num_rows > 0) {
         
         <td class='p-3'> <?php echo $row["name"]; ?> </td>
         <td class='p-3'> <?php echo $row["email"]; ?> </td>
-        <td class='p-3'> <?php echo $row["gender"]; ?> </td>
-       
+      
         <td class='p-3'> <?php echo $row["phonenumber"]; ?> </td>
-        
+        <td class='p-3'> <?php echo $row["address"]; ?> </td>
         <td class='p-3'> <?php echo $row["date"]; ?> </td>
         
       
-    
+     <td class='p-3'>
+      <a href='book.php?id=<?php echo $row['email'] ; ?>' 
+             class='text-blue-500 hover:underline mr-2'>Book Appointment</a>
+                  </td>
         </tr>
   <?php  }
 }

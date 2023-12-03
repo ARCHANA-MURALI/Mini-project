@@ -1,163 +1,63 @@
 <?php
-// Include the database configuration
-include('includes/config.php');
-
-
-
-// Check if the form is submitted
-if (isset($_POST['submitReply'])) {
-    $id = $_POST['id'];
-    $reply = $_POST['replyText'];
-    $email = $_POST['email'];
-    $to_email = $email;
-    $subject = "Reply from Admin";
-    $body =$reply;
-    $headers = "From:your@gmail.com";
-    if (mail($to_email, $subject, $body, $headers)) {
-       echo "<script>alert(' successfully sent to $email');</script>";
-       $query = "UPDATE contact SET status = 'verified', reply = '$reply' WHERE id = $id";
-       mysqli_query($con, $query);
-       echo "<script>alert('Successfully Updated');</script>";
-    echo "<script>window.location.assign('contact.php');</script>"; 
-   
-    } else {
-        echo "<script>alert('sending failed');</script>";
-    }
-    // Update the contact record and send email
-    
-
-    // Reload the page to show updated data
-    
-}
-
-
-function getContactList($con)
+include('config.php');
+if(isset($_POST['submit']))
 {
-    $query = "SELECT * FROM contact ORDER BY id DESC";
-    $result = mysqli_query($con, $query);
-    return $result;
-}
+$name=$_POST['name'];
+$message=$_POST['message'];
+$email=$_POST['email'];
 
-// Retrieve the contact list
-$contactList = getContactList($con);
+$query=mysqli_query($con,"insert into contact(name,email,message) values('$name','$email','$message')");
+if($query)
+{
+	echo "<script>alert('Successfully send admin will gave you reply through gmail');</script>";
+	//echo "<script>window.location.assign('contact.php');</script>";
+}
+else{
+  echo "<script>alert('failed');</script>";
+}}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clean Kerala - Dashboard</title>
+  <title>Clean Kerala - Contact Us</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
 </head>
 <body class="bg-gradient-to-r from-green-400 to-green-600">
- 
-  <?php include('includes/navbar.php'); ?>
-  <div class="flex">
-  <?php include('includes/sidebar.php'); ?>
-    
-  <main class="w-full p-6 ">
-      
-        <h2 class="text-3xl font-bold mb-6 text-center text-white">Contact List</h2>
+  <?php include('header.php'); ?>
+  
+  <header class="container mx-auto py-16 text-center">
+    <h1 class="text-5xl font-bold text-white mb-6 animate__animated animate__fadeInDown">Contact Us</h1>
+    <p class="text-xl text-gray-300 mb-8 animate__animated animate__fadeInUp">Have a question or need assistance? Get in touch with us.</p>
+  </header>
+  
+  <section class="bg-white py-16">
+    <div class="container mx-auto text-center">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6">Get in Touch</h2>
+      <div class="max-w-2xl mx-auto">
+        <p class="text-gray-700 mb-6">Have a question or need assistance? Feel free to get in touch with us.</p>
+        <form class="text-left" method='post'>
+          <div class="mb-4">
+            <label for="name" class="block text-gray-700 font-medium mb-2">Name</label>
+            <input type="text" id="name" name="name" class="w-full px-4 py-2 rounded-lg border focus:ring-green-500 focus:border-green-500">
+          </div>
+          <div class="mb-4">
+            <label for="email" class="block text-gray-700 font-medium mb-2">Email</label>
+            <input type="email" id="email" name="email" class="w-full px-4 py-2 rounded-lg border focus:ring-green-500 focus:border-green-500">
+          </div>
+          <div class="mb-4">
+            <label for="message" class="block text-gray-700 font-medium mb-2">Message</label>
+            <textarea id="message" name="message" rows="4" class="w-full px-4 py-2 rounded-lg border focus:ring-green-500 focus:border-green-500"></textarea>
+          </div>
+          <button type="submit" name='submit' class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-full transition duration-300 ease-in-out transform hover:scale-105">
+            Send Message
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
 
-<!-- Form to submit the reply -->
- <!-- Reply Modal -->
-<div id="replyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-<div class="bg-white p-6 rounded-lg shadow-md w-3/5">
-    <h2 class="text-xl font-semibold mb-4">Enter Reply</h2>
-    <form id="replyForm" method="post">
-        <input type="hidden" id="contactId" name="id" value="">
-        <input type="hidden" id="contactEmail" name="email" value="">
-        <textarea name="replyText" id="replyText" rows="4" class="w-full p-2 mb-4 border rounded-md"></textarea>
-        <div class="flex justify-end">
-            <button type="button" class="mr-4 px-4 py-2 bg-gray-300 rounded-md" onclick="closeReplyModal()">Cancel</button>
-            <button type="submit" name="submitReply" class="px-4 py-2 bg-blue-500 text-white rounded-md">Submit</button>
-        </div>
-    </form>
-</div>
-</div>
-
-<!-- Search Bar -->
-<div class="mb-4 flex justify-center">
-    <input type="text" id="searchInput" class="w-full px-4 py-2 w-64 border rounded-md" placeholder="Search...">
-</div>
-
-<!-- Contact List Table -->
-<div class="bg-white p-4 rounded-lg shadow">
-    <?php if (mysqli_num_rows($contactList) > 0) { ?>
-        <table id="contactTable" class="table-auto w-full">
-            <thead>
-                <tr class='bg-gray-200'>
-                    <th class="px-4 py-2">ID</th>
-                    <th class="px-4 py-2">Name</th>
-                    <th class="px-4 py-2">Email</th>
-                    
-                    <th class="px-4 py-2">Status</th>
-                    <th class="px-4 py-2">Date</th>
-                    <th class="px-4 py-2">Reply</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while ($row = mysqli_fetch_assoc($contactList)) { ?>
-                    <tr>
-                        <td class="border px-4 py-2"><?php echo $row['id']; ?></td>
-                        <td class="border px-4 py-2"><?php echo $row['name']; ?></td>
-                        <td class="border px-4 py-2"><?php echo $row['email']; ?></td>
-                      
-                        <td class="border px-4 py-2"><?php echo $row['status']; ?></td>
-                        <td class="border px-4 py-2"><?php echo $row['date']; ?></td>
-                        <td class="border px-4 py-2">
-                            <?php if ($row['status'] === 'not verified') { ?>
-                                <button class="bg-blue-500 text-white px-2 py-1 rounded-md" onclick="openReplyModal(<?php echo $row['id']; ?>,'<?php echo $row['email']; ?>')">Reply</button>
-                            <?php } else { echo $row['reply']; } ?>
-                        </td>
-                    </tr>
-                <?php } ?>
-            </tbody>
-        </table>
-    <?php } else { ?>
-        <p class="text-center text-gray-600">No contact records found.</p>
-    <?php } ?>
-</div>
-    </main>
-    <script>
-        // Function to open the reply modal
-        function openReplyModal(id, email) {
-            const modal = document.getElementById('replyModal');
-            modal.classList.remove('hidden');
-
-            // Set the ID and email of the contact for which the reply is being entered
-            document.getElementById('contactId').value = id;
-            document.getElementById('contactEmail').value = email;
-        }
-
-        // Function to close the reply modal
-        function closeReplyModal() {
-            const modal = document.getElementById('replyModal');
-            modal.classList.add('hidden');
-        }
-    
-
-        // Function to handle the search functionality
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const searchValue = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#contactTable tbody tr');
-
-            rows.forEach(row => {
-                const columns = row.getElementsByTagName('td');
-                let showRow = false;
-                for (let i = 1; i < columns.length - 1; i++) {
-                    const columnText = columns[i].textContent.toLowerCase();
-                    if (columnText.includes(searchValue)) {
-                        showRow = true;
-                        break;
-                    }
-                }
-                row.style.display = showRow ? '' : 'none';
-            });
-        });
-    </script>
-
-        </div>
+ <?php include('footer.php') ?>
 </body>
 </html>

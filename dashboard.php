@@ -1,5 +1,6 @@
 <?php 
 include('includes/config.php');
+$email=$_SESSION['email'];
 ?>
 
 <!DOCTYPE html>
@@ -22,10 +23,10 @@ include('includes/config.php');
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Users Card -->
         <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-2">
-          <h3 class="text-xl font-semibold text-green-600 mb-2"><i class="fas fa-users"></i> Users</h3>
+          <h3 class="text-xl font-semibold text-green-600 mb-2"><i class="fas fa-male"></i> Services</h3>
           <p class="text-gray-700 text-3xl font-bold">
             <?php
-              $que = "SELECT COUNT(*) AS user_count FROM user";
+              $que = "SELECT COUNT(*) AS user_count FROM category";
               $re = mysqli_query($con, $que);
               $r = mysqli_fetch_assoc($re);
               echo $r['user_count'];
@@ -35,10 +36,10 @@ include('includes/config.php');
 
         <!--workers Card -->
         <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-2">
-          <h3 class="text-xl font-semibold text-green-600 mb-2"><i class="fas fa-user"></i> Workers</h3>
+          <h3 class="text-xl font-semibold text-green-600 mb-2"><i class="fas fa-users"></i> Users</h3>
           <p class="text-gray-700 text-3xl font-bold">
             <?php
-              $que = "SELECT COUNT(*) AS worker_count FROM worker";
+              $que = "SELECT COUNT(*) AS worker_count FROM user ";
               $re = mysqli_query($con, $que);
               $r = mysqli_fetch_assoc($re);
               echo $r['worker_count'];
@@ -51,7 +52,7 @@ include('includes/config.php');
           <h3 class="text-xl font-semibold text-green-600 mb-2"><i class="fas fa-book"></i> Bookings</h3>
           <p class="text-gray-700 text-3xl font-bold">
             <?php
-              $que = "SELECT COUNT(*) AS booking_count FROM book";
+              $que = "SELECT COUNT(*) AS booking_count FROM book where workerid='$email'";
               $re = mysqli_query($con, $que);
               $r = mysqli_fetch_assoc($re);
               echo $r['booking_count'];
